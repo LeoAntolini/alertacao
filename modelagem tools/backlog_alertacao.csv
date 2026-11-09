@@ -1,0 +1,184 @@
+﻿titulo,descricao,etapa,tipo,prioridade,pontos,sprint
+[RF01] Cadastro de morador,"Quando o visitante enviar nome, e-mail, senha e endereço, o sistema deve criar a conta de MORADOR e associar o ponto de referência à região que o contém, em até 3 s.
+
+Critério de aceite: conta criada com região atribuída; endereço fora de região coberta é recusado (RN01); em demonstração, um botão oferece endereço de exemplo.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,3,Sprint 1 (07-13/11)
+[RF02] Autenticação,"Quando o usuário informar credenciais válidas, o sistema deve autenticá-lo e iniciar sessão com expiração de 24 h.
+
+Critério de aceite: credenciais inválidas retornam mensagem genérica, sem indicar qual campo errou (RNF01, RNF02).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,2,Sprint 1 (07-13/11)
+[RF03] Reportar ponto de risco,"Quando o morador autenticado confirmar o relato, o sistema deve registrar o ponto de risco com categoria (DRENAGEM, ENCOSTA, ARVORE, REDE_ELETRICA), descrição de até 500 caracteres e localização (GPS, pino no mapa ou endereço), em até 3 s.
+
+Critério de aceite: ponto aparece no mapa com identificador, categoria e localização válida; GPS com precisão pior que 100 m pede ajuste manual do pino (RNF07).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,5,Sprint 2 (14-20/11)
+[RF04] Visualizar mapa de pontos de risco,"Quando o morador abrir o mapa, o sistema deve exibir os pontos ATIVOS da região selecionada, com filtro por categoria.
+
+Critério de aceite: filtrar por categoria oculta as demais; pontos RESOLVIDOS não aparecem (RN12); atribuição © OpenStreetMap contributors visível (RN14).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,5,Sprint 2 (14-20/11)
+[RF05] Confirmar ponto de risco de outro morador,"Quando o morador confirmar “também vejo este risco” em ponto de outro morador, o sistema deve registrar uma confirmação por morador e exibir o total no ponto.
+
+Critério de aceite: segunda confirmação do mesmo morador é rejeitada.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,could,2,Sprint 3 (21-25/11)
+[RF06] Gerenciar regiões e modelos de tarefa,"Quando o Responsável cadastrar regiões (GeoJSON) e modelos de tarefa, o sistema deve persisti-los para uso na geração de planos.
+
+Critério de aceite: no mínimo, carga inicial por script; telas simples (painel administrativo) se houver tempo.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,3,Sprint 2 (14-20/11)
+[RF07] Publicar alerta manual,"Quando o Responsável informar região, evento (CHUVA_FORTE ou VENTANIA), nível, janela prevista e mensagem e confirmar, o sistema deve publicar o alerta com origem MANUAL e estágio calculado pela antecedência (PREVISÃO, PREPARAÇÃO, IMINENTE).
+
+Critério de aceite: estágio correto para antecedências de 5 dias, 48 h e 12 h.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,3,Sprint 2 (14-20/11)
+[RF08] Sugestão automática de alerta a partir da previsão,"Uma vez por dia, para cada região, o sistema deve consultar a previsão da fonte configurada (Open-Meteo) para os próximos 7 dias e, se um limiar configurado for excedido, criar alerta RASCUNHO com origem AUTOMÁTICA.
+
+Critério de aceite: com previsão simulada acima do limiar, um rascunho é criado; abaixo, não. Atribuição “Weather data by Open-Meteo.com” na interface (RN14).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,5,Sprint 3 (21-25/11)
+[RF09] Notificar moradores da região,"Quando um alerta for PUBLICADO, o sistema deve notificar os moradores da região por caixa de entrada e e-mail, e por web push quando autorizado, em até 60 s.
+
+Critério de aceite: em teste com 100 moradores, 100% recebem na caixa de entrada em até 60 s (RNF05).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,5,Sprint 2 (14-20/11)
+[RF10] Gerar plano de prevenção,"Quando um alerta for PUBLICADO, o sistema deve gerar uma tarefa PENDENTE por morador da região para cada modelo de tarefa ativo ligado ao evento (RN03), sem gerar tarefas para ARVORE e REDE_ELETRICA (RN06).
+
+Critério de aceite: nº de tarefas = moradores × modelos aplicáveis; nenhuma tarefa para ARVORE ou REDE_ELETRICA.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,5,Sprint 2 (14-20/11)
+[RF11] Consultar alerta ativo e plano,"Quando o morador abrir um alerta ativo, o sistema deve exibir nível, estágio, janela prevista, antecedência restante, origem, o aviso da RN11 e o plano com progresso.
+
+Critério de aceite: todos os elementos visíveis em tela de 360 px de largura (RNF03, RNF10).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,3,Sprint 2 (14-20/11)
+[RF12] Concluir tarefa,"Quando o morador selecionar “Concluí” em tarefa PENDENTE, o sistema deve mudá-la para CONCLUIDA e registrar data, hora e autor.
+
+Critério de aceite: estado e carimbo de tempo persistidos; ação não reversível (RN05).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,2,Sprint 2 (14-20/11)
+[RF13] Dispensar tarefa (“Não se aplica”),"Quando o morador selecionar “Não se aplica”, o sistema deve marcar a tarefa como DISPENSADA e excluí-la do denominador do indicador I2.
+
+Critério de aceite: I2 recalculado sem a tarefa dispensada.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,1,Sprint 3 (21-25/11)
+[RF14] Acionar o órgão responsável (criar chamado),"Quando o morador selecionar “Preciso de ajuda” em tarefa ou “Acionar órgão” em ponto de risco e confirmar, o sistema deve criar chamado ABERTO vinculado ao ponto (e à tarefa, se houver).
+
+Critério de aceite: chamado contém localização, categoria, descrição e indicação de risco iminente; tarefa de origem fica ESCALADA; exibe o aviso da RN13.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,3,Sprint 3 (21-25/11)
+[RF15] Encaminhar chamado por e-mail ao destinatário,"Quando um chamado for criado, o sistema deve enviá-lo por e-mail ao destinatário roteado pela categoria, com coordenadas, mapa, descrição, indicação de risco iminente, foto (quando houver) e link seguro, em até 60 s, e mudar o status para ENCAMINHADO.
+
+Critério de aceite: e-mail entregue ao destinatário de teste (caixa controlada pelo grupo, nunca órgão real); status atualizado.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,must,3,Sprint 3 (21-25/11)
+[RF16] Destinatário atualiza o status pelo link seguro,"Quando o destinatário acessar o link e escolher uma ação (em atendimento, resolvido, não procede), o sistema deve atualizar o status do chamado e registrar data e hora.
+
+Critério de aceite: link expirado ou reutilizado após resolução é recusado (RN08).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,3,Sprint 3 (21-25/11)
+[RF17] Meus chamados e confirmação de resolução,"Quando o morador abrir “Meus chamados”, o sistema deve exibir status e histórico e permitir confirmar “resolvido”.
+
+Critério de aceite: confirmação muda o chamado e o ponto para RESOLVIDO.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,3,Sprint 3 (21-25/11)
+[RF18] Encerrar alerta e expirar tarefas,"Quando o fim da janela de um alerta for atingido, o sistema deve encerrá-lo e expirar as tarefas PENDENTES (RN04).
+
+Critério de aceite: estado ENCERRADO e tarefas EXPIRADA em até 30 min após o fim da janela (o estado também é avaliado na leitura).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,2,Sprint 3 (21-25/11)
+[RF19] Painel de indicadores,"Quando o Responsável abrir o painel, o sistema deve exibir os indicadores I1 a I7 para o período selecionado (padrão 30 dias).
+
+Critério de aceite: valores conferem com cálculo manual sobre dados de teste. Prioridade máxima entre os Should: sustenta a Etapa 8 (Impacto Ambiental, 7,5 pontos).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,5,Sprint 3 (21-25/11)
+[RF20] Anexar foto ao relato,"Quando o morador anexar uma foto ao relato, o sistema deve armazená-la com até 5 MB e exibi-la no ponto.
+
+Critério de aceite: arquivo acima de 5 MB é recusado com mensagem.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,could,3,Sprint 3 (21-25/11)
+[RF21] Reforço de notificação por mudança de estágio,"Quando o estágio de um alerta PUBLICADO mudar (PREVISÃO para PREPARAÇÃO ou para IMINENTE), o sistema deve notificar de novo, uma vez por mudança, os moradores da região que tenham tarefas PENDENTES desse alerta.
+
+Critério de aceite: com relógio simulado, cada mudança gera exatamente uma notificação por morador com tarefa pendente; quem concluiu todas não recebe.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,implementacao,should,3,Sprint 3 (21-25/11)
+"[INFRA] Criar repositório, estrutura de pastas, .gitignore e .env.example","Pastas sugeridas: docs/ (documentos, atas, diagramas), app/ (código). O .gitignore e o .env.example evitam que senhas, chaves (SMTP, banco, VAPID) e dados locais sejam enviados ao GitHub. Nunca versionar segredos.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,infra,must,1,Sprint 1 (07-13/11)
+"[INFRA] Ambiente local com Docker (Django, GeoDjango e PostGIS)","Subir a aplicação e o banco PostgreSQL com PostGIS por docker compose, com um comando. Critério: qualquer integrante clona o repositório e roda o projeto seguindo o README.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,infra,must,5,Sprint 1 (07-13/11)
+[INFRA] Teste de implantação: banco (Neon) e hospedagem do app,"Confirmar até 10/11 se o plano gratuito sustenta o app em contêiner e o banco com PostGIS. Alternativa se falhar: docker compose local e vídeo de demonstração.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,infra,must,3,Sprint 1 (07-13/11)
+[INFRA] Carga inicial dos polígonos dos distritos Jardim Ângela e Capão Redondo,"Baixar os limites de distrito do GeoSampa (shapefile), converter para GeoJSON em WGS84 e carregar como regiões. Registrar a fonte e conferir a licença do conjunto de dados.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,infra,must,3,Sprint 1 (07-13/11)
+[INFRA] Testes automatizados no GitHub Actions,"Executar os testes a cada push e PR. Serve de evidência de qualidade (RNF02: acesso administrativo negado com 403).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,teste,should,3,Sprint 2 (14-20/11)
+[INFRA] Tarefas agendadas por workflow do GitHub Actions e endpoint protegido,"Workflow agendado chama um endpoint protegido por token que executa RF08, RF18 e RF21. Alternativa: comandos de gerenciamento do Django.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,infra,should,3,Sprint 3 (21-25/11)
+[INFRA] Monitor de disponibilidade externo (RNF06),"Configurar monitor de uptime e guardar o relatório dos 7 dias anteriores à apresentação (meta: 99%).
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,teste,should,1,Sprint 3 (21-25/11)
+"[TESTE] Verificar RNF03, RNF04, RNF07 e RNF11","Larguras 360, 768 e 1366 px sem rolagem horizontal; carga em até 3 s (percentil 95) em 4G simulado; casos de GPS com 20 m e 300 m; últimas duas versões de Chrome, Firefox, Safari e Edge. Registrar evidências.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,teste,should,3,Sprint 3 (21-25/11)
+[MVP] Gravar vídeo de demonstração (entrega até 25/11),"Roteiro: cadastro, alerta publicado, notificação, plano de prevenção, conclusão de tarefa, reporte de árvore em risco, chamado ao órgão e painel de indicadores. Gravar no celular ou em emulador.
+
+Referência: Documento-Base v2.1 do AlertAção.",MVP,documentacao,must,3,Sprint 3 (21-25/11)
+[E3] Refazer a planilha de requisitos (v2),"Refazer RF e RNF na sintaxe da ISO 29148 (seções 6 e 7 do Documento-Base v2.1), corrigir a rastreabilidade, marcar status Validado e remover as notas internas da aba LEIA-ME.
+
+Referência: Documento-Base v2.1 do AlertAção.",E3,requisito,must,5,Sprint 1 (07-13/11)
+[E3] Aplicar questionário online (≥ 30 respostas),"Roteiro de 10 perguntas na seção 16.6 do Documento-Base. Prazo: 13/11. Os resultados alimentam a Etapa 3.
+
+Referência: Documento-Base v2.1 do AlertAção.",E3,requisito,must,3,Sprint 1 (07-13/11)
+[E3] Entrevista de 15 minutos,"Entrevistar um morador de área de risco ou representante comunitário. Registrar data, perguntas, respostas e requisitos derivados.
+
+Referência: Documento-Base v2.1 do AlertAção.",E3,requisito,must,2,Sprint 1 (07-13/11)
+"[E3] Ajustar verificação, validação e rastreabilidade após a Aula 7","A Aula 7 (Requisitos II) deve ocorrer na quarta, 11/11. Aplicar o conteúdo na planilha da Etapa 3.
+
+Referência: Documento-Base v2.1 do AlertAção.",E3,requisito,must,2,Sprint 1 (07-13/11)
+[E4] Diagrama de Casos de Uso v2 (UC01 a UC16),"Seção 10 do Documento-Base. Convenção da Aula 5: seta do «include» aponta para o caso incluído; seta do «extend» parte do caso que estende. Rótulos legíveis, sem sobreposição.
+
+Referência: Documento-Base v2.1 do AlertAção.",E4,modelagem,must,3,Sprint 1 (07-13/11)
+[E4] Diagrama de Classes v2,"Seção 9 do Documento-Base: sem Proposta e sem Indicador como entidade, com Chamado, ModeloTarefa, Notificação e Destinatário; enums e multiplicidades definidos.
+
+Referência: Documento-Base v2.1 do AlertAção.",E4,modelagem,must,3,Sprint 1 (07-13/11)
+"[E4] Diagrama de Sequência SD01: publicar alerta, gerar plano e notificar","Seção 11 do Documento-Base, com fluxos alternativos (papel inválido e região sem moradores).
+
+Referência: Documento-Base v2.1 do AlertAção.",E4,modelagem,must,2,Sprint 1 (07-13/11)
+[E4] Diagrama de Sequência SD02: pedir ajuda e acionar o órgão,"Seção 11 do Documento-Base, com fluxos alternativos (sem retorno em 72 h e confirmação pelo morador).
+
+Referência: Documento-Base v2.1 do AlertAção.",E4,modelagem,must,2,Sprint 1 (07-13/11)
+[E4] Diagrama de Sequência SD03: sugestão automática diária,"Opcional. Agendador, FonteOpenMeteo, criação de rascunho e confirmação pelo Responsável.
+
+Referência: Documento-Base v2.1 do AlertAção.",E4,modelagem,could,2,Sprint 2 (14-20/11)
+[E5] Arquitetura: diagrama de componentes e justificativa das decisões,"Seção 12 do Documento-Base e decisões D12 e D14: monólito modular em camadas, PWA, Django com GeoDjango e PostgreSQL com PostGIS. Justificar cada decisão com os requisitos que a motivam (Aula 8).
+
+Referência: Documento-Base v2.1 do AlertAção.",E5,arquitetura,must,3,Sprint 1 (07-13/11)
+[E7] README e instruções de execução,"README com visão do projeto, requisitos para rodar, comandos, variáveis de ambiente (.env.example) e como acessar o ambiente de demonstração.
+
+Referência: Documento-Base v2.1 do AlertAção.",E7,documentacao,must,3,Sprint 3 (21-25/11)
+[E7] Manual de uso e documentação final,"Manual do morador e do Responsável, com capturas de tela, e organização final da documentação no repositório.
+
+Referência: Documento-Base v2.1 do AlertAção.",E7,documentacao,must,3,Pós-MVP
+"[E8] Impacto ambiental: indicadores, resultados obtidos e esperados, limitações","Seção 13 do Documento-Base. Separar resultados obtidos (dados de teste e demonstração) de benefícios esperados. Declarar as limitações com transparência.
+
+Referência: Documento-Base v2.1 do AlertAção.",E8,documentacao,must,5,Pós-MVP
+"[E2] Atualizar a Etapa 2: processo, riscos, EAP e cronograma","Itens da seção 15 do Documento-Base: justificar Incremental e Scrum/Kanban, definir sprints, WIP e definição de pronto, incluir EAP, preencher riscos (LGPD, perda de integrante, disponibilidade, API externa, alarme falso, prazo), atualizar MoSCoW e papéis.
+
+Referência: Documento-Base v2.1 do AlertAção.",E2,documentacao,should,3,Pós-MVP
+"[E1] Atualizar a Etapa 1: problema com fatos verificados, stakeholders e metas de ODS","Itens da seção 15 do Documento-Base: reescrever o problema com os fatos da seção 2, unificar stakeholders com a Etapa 3 e citar metas de ODS (conferir o texto oficial).
+
+Referência: Documento-Base v2.1 do AlertAção.",E1,documentacao,should,3,Pós-MVP
+[E0] Conferir lista de integrantes e registro da mudança de grupo,"Garantir que a Etapa 0 lista os 3 integrantes atuais e guardar o registro da mudança de grupo.
+
+Referência: Documento-Base v2.1 do AlertAção.",E0,documentacao,should,1,Pós-MVP
+[Apresentação] Slides da A3 e ensaio,"10 minutos de apresentação e 5 de arguição, com todos os integrantes participando. Incluir teste de uso com visitantes (cinco tarefas e questionário SUS).
+
+Referência: Documento-Base v2.1 do AlertAção.",Apresentação,documentacao,must,5,Pós-MVP
