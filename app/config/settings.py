@@ -147,3 +147,8 @@ DATABASES = {
 
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
+
+# Cole no FIM de app/config/settings.py (depois do bloco que você já colou):
+INSTALLED_APPS += ["regioes"]
+
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
