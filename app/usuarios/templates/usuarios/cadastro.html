@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block titulo %}Cadastro · AlertAção{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+{% endblock %}
+{% block conteudo %}
+  <h1>Criar conta</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
+
+    <label for="{{ form.nome.id_for_label }}">Nome</label>
+    {{ form.nome }}{{ form.nome.errors }}
+
+    <label for="{{ form.email.id_for_label }}">E-mail</label>
+    {{ form.email }}{{ form.email.errors }}
+
+    <label for="{{ form.senha1.id_for_label }}">Senha</label>
+    {{ form.senha1 }}{{ form.senha1.errors }}
+
+    <label for="{{ form.senha2.id_for_label }}">Repita a senha</label>
+    {{ form.senha2 }}{{ form.senha2.errors }}
+
+    <label for="{{ form.endereco.id_for_label }}">Endereço ou ponto de referência</label>
+    {{ form.endereco }}{{ form.endereco.errors }}
+
+    <label>Onde você mora? Toque no mapa ou use a localização do aparelho.</label>
+    <div id="mapa"></div>
+    <button type="button" class="secundario" id="btn-gps">Usar minha localização</button>
+
+    {% if demo %}
+      <label for="demo-regiao">Modo demonstração: usar endereço de exemplo</label>
+      <select id="demo-regiao">
+        <option value="">Escolha uma região</option>
+        {% for r in regioes %}<option value="{{ forloop.counter0 }}">{{ r.nome }}</option>{% endfor %}
+      </select>
+    {% endif %}
+
+    <div class="consentimento">
+      <label>{{ form.consentimento }} <span>{{ form.consentimento.label }}</span></label>
+      {{ form.consentimento.errors }}
+    </div>
+
+    <button type="submit">Criar conta</button>
+  </form>
+  <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a>.</p>
+
+  {{ regioes|json_script:"regioes-data" }}
+  <script>
+  (function () {
+    var regioes = JSON.parse(document.getElementById("regioes-data").textContent);
+    var inicio = regioes.length ? [regioes[0].lat, regioes[0].lon] : [-23.55, -46.63];
+    var mapa = L.map("mapa").setView(inicio, 13);
+    L.tileLayer("{{ tile_url|escapejs }}", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(mapa);
+
+    var marcador = null;
+    function definirPonto(lat, lon, precisao) {
+      document.getElementById("id_latitude").value = lat.toFixed(6);
+      document.getElementById("id_longitude").value = lon.toFixed(6);
+      document.getElementById("id_precisao_metros").value = (precisao === null ? "" : Math.round(precisao));
+      if (marcador) {
+        marcador.setLatLng([lat, lon]);
+      } else {
+        marcador = L.marker([lat, lon], {draggable: true}).addTo(mapa);
+        marcador.on("dragend", function () {
+          var p = marcador.getLatLng();
+          definirPonto(p.lat, p.lng, null);
+        });
+      }
+      mapa.setView([lat, lon], Math.max(mapa.getZoom(), 16));
+    }
+
+    var latAtual = parseFloat(document.getElementById("id_latitude").value);
+    var lonAtual = parseFloat(document.getElementById("id_longitude").value);
+    if (!isNaN(latAtual) && !isNaN(lonAtual)) { definirPonto(latAtual, lonAtual, null); }
+
+    mapa.on("click", function (e) { definirPonto(e.latlng.lat, e.latlng.lng, null); });
+
+    document.getElementById("btn-gps").addEventListener("click", function () {
+      if (!navigator.geolocation) {
+        alert("Seu navegador não permite localização. Toque no mapa para marcar o ponto.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        if (pos.coords.accuracy > 100) {
+          alert("A precisão do GPS está ruim (" + Math.round(pos.coords.accuracy) + " m). Toque no mapa para ajustar o ponto.");
+          mapa.setView([pos.coords.latitude, pos.coords.longitude], 16);
+          return;
+        }
+        definirPonto(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
+      }, function () {
+        alert("Não foi possível obter a localização. Toque no mapa para marcar o ponto.");
+      }, {enableHighAccuracy: true, timeout: 15000});
+    });
+
+    var demo = document.getElementById("demo-regiao");
+    if (demo) {
+      demo.addEventListener("change", function () {
+        if (demo.value === "") { return; }
+        var r = regioes[parseInt(demo.value, 10)];
+        definirPonto(r.lat, r.lon, null);
+        var campo = document.getElementById("id_endereco");
+        if (!campo.value) { campo.value = "Endereço de exemplo (demonstração) - " + r.nome; }
+      });
+    }
+  })();
+  </script>
+{% endblock %}

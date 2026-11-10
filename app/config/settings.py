@@ -152,3 +152,26 @@ TIME_ZONE = "America/Sao_Paulo"
 INSTALLED_APPS += ["regioes"]
 
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# Cole no FIM de app/config/settings.py (depois dos blocos que você já colou):
+
+INSTALLED_APPS += ["usuarios"]
+AUTH_USER_MODEL = "usuarios.Usuario"
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "inicio"
+LOGOUT_REDIRECT_URL = "login"
+
+SESSION_COOKIE_AGE = 60 * 60 * 24  # RF02: sessão expira em 24 h
+
+# RNF01: senhas com Argon2 (o PBKDF2 fica só para ler hashes antigos)
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+]
+
+# O OpenStreetMap exige um Referer válido nas requisições de mapa
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+MAP_TILE_URL = os.environ.get("MAP_TILE_URL", "https://tile.openstreetmap.org/{z}/{x}/{y}.png")
+DEMO_MODE = os.environ.get("DEMO_MODE", "0") == "1"
