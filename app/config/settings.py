@@ -162,9 +162,9 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "inicio"
 LOGOUT_REDIRECT_URL = "login"
 
-SESSION_COOKIE_AGE = 60 * 60 * 24  # RF02: sessão expira em 24 h
+SESSION_COOKIE_AGE = 60 * 60 * 24  # RF09: sessão expira em 24 h
 
-# RNF01: senhas com Argon2 (o PBKDF2 fica só para ler hashes antigos)
+# RNF05: senhas com Argon2 (o PBKDF2 fica só para ler hashes antigos)
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",

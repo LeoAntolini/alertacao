@@ -8,7 +8,7 @@ from regioes.models import Regiao
 
 from .models import Usuario
 
-LIMITE_PRECISAO_GPS_M = 100  # RNF07
+LIMITE_PRECISAO_GPS_M = 100  # RNF04
 
 
 class CadastroForm(forms.Form):

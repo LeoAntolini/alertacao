@@ -11,7 +11,7 @@ class Regiao(models.Model):
     nome = models.CharField(max_length=120, unique=True)
     cidade = models.CharField(max_length=120, default="São Paulo")
     geometria = models.MultiPolygonField(srid=4326)
-    # Ponto dentro do polígono, usado para consultar a previsão do tempo (RF08).
+    # Ponto dentro do polígono, usado para consultar a previsão do tempo (RF13).
     # Se ficar vazio, é calculado ao salvar.
     ponto_representativo = models.PointField(srid=4326, blank=True)
 
