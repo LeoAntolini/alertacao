@@ -20,12 +20,22 @@
     .consentimento label { font-weight: 400; display: flex; gap: 8px; align-items: flex-start; }
     #mapa { height: 280px; border-radius: 8px; border: 1px solid var(--borda); margin-top: 8px; }
     a { color: var(--azul); }
+    .mensagens { list-style: none; padding: 0; margin: 0 0 12px; }
+    .mensagens li { padding: 10px; border-radius: 8px; margin-bottom: 6px; background: #eef3fb; border: 1px solid var(--borda); }
+    .mensagens li.success { background: #e7f5ea; border-color: #9ccfa6; }
+    .mensagens li.error { background: #fdeceb; border-color: #e5a5a1; color: var(--erro); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e3e9f4; font-size: .85rem; font-weight: 600; }
+    .nivel-baixo { background: #fff3c4; } .nivel-moderado { background: #ffd9a8; } .nivel-alto { background: #f5b5b0; }
+    .tarefa { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+    .tarefa form { margin: 0; }
+    .tarefa-concluida { background: #f0f8f1; } .tarefa-dispensada, .tarefa-expirada { opacity: .7; }
   </style>
   {% block head %}{% endblock %}
 </head>
 <body>
   <header>AlertAção</header>
   <main>
+    {% if messages %}<ul class="mensagens">{% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
     {% block conteudo %}{% endblock %}
   </main>
 </body>

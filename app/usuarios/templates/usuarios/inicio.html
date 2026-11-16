@@ -8,6 +8,21 @@
   {% else %}
     <p>Seu usuário não está ligado a uma região.</p>
   {% endif %}
+
+  <h2>Alertas ativos</h2>
+  {% if alertas_ativos %}
+    {% for a in alertas_ativos %}
+      <div class="tarefa">
+        <strong><a href="{% url 'alerta_detalhe' a.pk %}">{{ a.get_evento_display }}</a></strong>
+        <span class="badge nivel-{{ a.nivel|lower }}">{{ a.get_nivel_display }}</span>
+        <span class="badge">{{ a.estagio.label }}</span>
+        <p>Início previsto: {{ a.janela_inicio|date:"d/m/Y H:i" }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>Nenhum alerta ativo para a sua região no momento.</p>
+  {% endif %}
+
   <p class="aviso">Aviso preventivo comunitário. Não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
   <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}

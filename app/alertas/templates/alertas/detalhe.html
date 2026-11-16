@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titulo %}Alerta · AlertAção{% endblock %}
+{% block conteudo %}
+  <h1>{{ alerta.get_evento_display }} em {{ alerta.regiao.nome }}</h1>
+  <p>
+    <span class="badge nivel-{{ alerta.nivel|lower }}">Nível {{ alerta.get_nivel_display }}</span>
+    <span class="badge">{{ estagio.label }}</span>
+  </p>
+  <p><strong>Previsto:</strong> de {{ alerta.janela_inicio|date:"d/m/Y H:i" }} até {{ alerta.janela_fim|date:"d/m/Y H:i" }}</p>
+  <p><strong>Antecedência restante:</strong> {{ restante_texto }}</p>
+  <p><strong>Origem:</strong> {{ alerta.get_origem_display }}{% if alerta.fonte %} ({{ alerta.fonte }}){% endif %}</p>
+  <p>{{ alerta.mensagem|linebreaksbr }}</p>
+  <p class="aviso">Aviso preventivo comunitário. Não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
+
+  <h2>Seu plano de prevenção</h2>
+  {% if total %}
+    <p><strong>{{ concluidas }} de {{ total }}</strong> tarefas concluídas.</p>
+  {% else %}
+    <p>Nenhuma tarefa para este alerta.</p>
+  {% endif %}
+
+  {% for t in tarefas %}
+    <div class="tarefa tarefa-{{ t.status|lower }}">
+      <strong>{{ t.modelo.titulo }}</strong> <span class="badge">{{ t.get_status_display }}</span>
+      <p>{{ t.modelo.instrucao }}</p>
+      {% if t.status == "PENDENTE" %}
+        <form method="post" action="{% url 'tarefa_concluir' t.pk %}">{% csrf_token %}<button type="submit">Concluí</button></form>
+        <form method="post" action="{% url 'tarefa_dispensar' t.pk %}">{% csrf_token %}<button type="submit" class="secundario">Não se aplica</button></form>
+      {% elif t.status == "CONCLUIDA" %}
+        <p>Concluída em {{ t.concluida_em|date:"d/m/Y H:i" }}.</p>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
+{% endblock %}

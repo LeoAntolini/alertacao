@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
+from alertas.choices import StatusAlerta
+from alertas.models import Alerta
 from regioes.models import Regiao
 
 from .forms import CadastroForm
@@ -12,7 +14,14 @@ from .models import Papel, Usuario
 
 @login_required
 def inicio(request):
-    return render(request, "usuarios/inicio.html")
+    alertas_ativos = []
+    if request.user.regiao_id:
+        alertas_ativos = Alerta.objects.filter(
+            regiao_id=request.user.regiao_id,
+            status=StatusAlerta.PUBLICADO,
+            janela_fim__gte=timezone.now(),
+        ).order_by("janela_inicio")
+    return render(request, "usuarios/inicio.html", {"alertas_ativos": alertas_ativos})
 
 
 def cadastro(request):
