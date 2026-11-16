@@ -175,3 +175,6 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 MAP_TILE_URL = os.environ.get("MAP_TILE_URL", "https://tile.openstreetmap.org/{z}/{x}/{y}.png")
 DEMO_MODE = os.environ.get("DEMO_MODE", "0") == "1"
+
+# Cole no FIM de app/config/settings.py:
+INSTALLED_APPS += ["alertas"]
