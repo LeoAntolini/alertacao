@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Notificações · AlertAção{% endblock %}
+{% block conteudo %}
+  <h1>Minhas notificações</h1>
+  {% for n in itens %}
+    <div class="tarefa">
+      {% if n.alerta.status == "PUBLICADO" %}
+        <strong><a href="{% url 'alerta_detalhe' n.alerta.pk %}">{{ n.titulo }}</a></strong>
+      {% else %}
+        <strong>{{ n.titulo }}</strong> <span class="badge">Alerta encerrado</span>
+      {% endif %}
+      <p>{{ n.alerta.mensagem|truncatechars:160 }}</p>
+      <p><small>Recebida em {{ n.enviada_em|date:"d/m/Y H:i" }}</small></p>
+    </div>
+  {% empty %}
+    <p>Você ainda não recebeu notificações.</p>
+  {% endfor %}
+  <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
+{% endblock %}

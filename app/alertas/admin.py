@@ -5,7 +5,7 @@ from .models import Alerta, ModeloTarefa, Tarefa
 from .servicos import publicar_alerta
 
 
-@admin.action(description="Publicar alertas selecionados (gera o plano de prevenção)")
+@admin.action(description="Publicar alertas selecionados (gera o plano e notifica os moradores)")
 def publicar(modeladmin, request, queryset):
     for alerta in queryset:
         try:
@@ -17,7 +17,8 @@ def publicar(modeladmin, request, queryset):
         else:
             modeladmin.message_user(
                 request,
-                f"{alerta}: publicado para {resultado.moradores} moradores, com {resultado.tarefas} tarefas geradas.",
+                (f"{alerta}: publicado para {resultado.moradores} moradores, com {resultado.tarefas} tarefas geradas; "
+                 f"e-mails: {resultado.emails_enviados} enviados, {resultado.emails_com_falha} com falha."),
                 level=messages.SUCCESS,
             )
 

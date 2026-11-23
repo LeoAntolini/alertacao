@@ -178,3 +178,18 @@ DEMO_MODE = os.environ.get("DEMO_MODE", "0") == "1"
 
 # Cole no FIM de app/config/settings.py:
 INSTALLED_APPS += ["alertas"]
+
+
+# Cole no FIM de app/config/settings.py:
+INSTALLED_APPS += ["notificacoes"]
+
+# E-mail: em desenvolvimento os e-mails aparecem no terminal (docker compose logs web).
+# Em produção, defina EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend e as variáveis EMAIL_*.
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1") == "1"
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "AlertAção <nao-responda@alertacao.local>")
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")  # usado no link dos e-mails

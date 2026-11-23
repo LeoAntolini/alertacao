@@ -6,6 +6,8 @@ from django.utils import timezone
 
 from usuarios.models import Papel, Usuario
 
+from notificacoes.servicos import enviar_pendentes, notificar_alerta
+
 from .choices import CATEGORIAS_SEM_TAREFA, StatusAlerta
 from .models import ModeloTarefa, Tarefa
 
@@ -14,12 +16,14 @@ from .models import ModeloTarefa, Tarefa
 class ResultadoPublicacao:
     moradores: int
     tarefas: int
+    emails_enviados: int = 0
+    emails_com_falha: int = 0
 
 
 def publicar_alerta(alerta, responsavel, agora=None):
-    """Publica um rascunho e gera o plano de prevenção (RF04 e RF05; RN02, RN03 e RN06).
+    """Publica um rascunho, gera o plano de prevenção e notifica os moradores (RF04, RF05 e RF14).
 
-    A notificação dos moradores (RF14) entra em um passo seguinte.
+    A publicação e o plano ficam salvos mesmo que o envio de e-mail falhe.
     """
     agora = agora or timezone.now()
     if responsavel.papel != Papel.RESPONSAVEL_SISTEMA:
@@ -45,5 +49,9 @@ def publicar_alerta(alerta, responsavel, agora=None):
         )
         tarefas = [Tarefa(alerta=alerta, modelo=m, usuario=u) for u in moradores for m in modelos]
         Tarefa.objects.bulk_create(tarefas)
+        notificar_alerta(alerta, moradores, agora)
 
-    return ResultadoPublicacao(moradores=len(moradores), tarefas=len(tarefas))
+    enviados, falhas = enviar_pendentes()
+    return ResultadoPublicacao(
+        moradores=len(moradores), tarefas=len(tarefas), emails_enviados=enviados, emails_com_falha=falhas
+    )

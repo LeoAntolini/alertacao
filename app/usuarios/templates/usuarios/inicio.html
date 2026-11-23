@@ -23,6 +23,7 @@
     <p>Nenhum alerta ativo para a sua região no momento.</p>
   {% endif %}
 
+  <p><a href="{% url 'notificacoes' %}">Ver minhas notificações</a></p>
   <p class="aviso">Aviso preventivo comunitário. Não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
   <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
