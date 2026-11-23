@@ -193,3 +193,25 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1") == "1"
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "AlertAção <nao-responda@alertacao.local>")
 SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")  # usado no link dos e-mails
+
+# Cole no FIM de app/config/settings.py (depois dos blocos anteriores):
+
+# --- Arquivos estáticos em produção (WhiteNoise) ---
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
+
+# --- Banco: o Neon exige SSL (POSTGRES_SSLMODE=require) ---
+DATABASES["default"]["OPTIONS"] = {"sslmode": os.environ.get("POSTGRES_SSLMODE", "prefer")}
+
+# --- Segurança atrás do proxy HTTPS da hospedagem ---
+CSRF_TRUSTED_ORIGINS = [
+    origem for origem in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if origem
+]
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

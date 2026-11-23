@@ -222,3 +222,10 @@ __marimo__/
 
 # App
 app/dados/
+
+# Acrescente ao .gitignore (se ainda não estiverem lá):
+.env
+.env.neon
+.env.neon.example
+app/dados/
+app/staticfiles/

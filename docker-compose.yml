@@ -28,5 +28,16 @@ services:
       db:
         condition: service_healthy
 
+  # Comandos de manutenção contra o banco da nuvem (Neon). Precisa do arquivo .env.neon.
+  # Exemplo:  docker compose run --rm web-neon python manage.py createsuperuser
+  web-neon:
+    build: ./app
+    profiles: ["neon"]
+    env_file:
+      - path: .env.neon
+        required: false
+    volumes:
+      - ./app:/app
+
 volumes:
   pgdata:
