@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Mapa de riscos · AlertAção{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+{% endblock %}
+{% block conteudo %}
+  <h1>Riscos em {{ regiao.nome }}</h1>
+  <p>
+    <a class="badge{% if not filtro %} nivel-moderado{% endif %}" href="{% url 'mapa' %}">Todos</a>
+    {% for valor, nome in categorias %}
+      <a class="badge{% if filtro == valor %} nivel-moderado{% endif %}" href="{% url 'mapa' %}?categoria={{ valor }}">{{ nome }}</a>
+    {% endfor %}
+  </p>
+  <div id="mapa"></div>
+  <p><a class="botao" href="{% url 'ponto_novo' %}">Relatar um risco</a></p>
+
+  <h2>{{ pontos|length }} risco{{ pontos|length|pluralize }} ativo{{ pontos|length|pluralize }}</h2>
+  {% for p in pontos %}
+    <div class="tarefa">
+      <span class="badge">{{ p.categoria }}</span> <small>{{ p.quando }}</small>
+      <p>{{ p.descricao }}</p>
+      {% if p.endereco %}<p><small>Referência: {{ p.endereco }}</small></p>{% endif %}
+    </div>
+  {% empty %}
+    <p>Nenhum risco ativo registrado{% if filtro %} nesta categoria{% endif %}.</p>
+  {% endfor %}
+  <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
+
+  {{ pontos|json_script:"pontos-data" }}
+  {{ regiao_geojson|json_script:"regiao-data" }}
+  <script>
+  (function () {
+    var pontos = JSON.parse(document.getElementById("pontos-data").textContent);
+    var regiao = JSON.parse(document.getElementById("regiao-data").textContent);
+    var mapa = L.map("mapa");
+    L.tileLayer("{{ tile_url|escapejs }}", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(mapa);
+    var contorno = L.geoJSON(regiao, {style: {color: "#1f4e9c", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
+    mapa.fitBounds(contorno.getBounds());
+    pontos.forEach(function (p) {
+      var caixa = document.createElement("div");
+      var titulo = document.createElement("strong");
+      titulo.textContent = p.categoria;
+      var texto = document.createElement("p");
+      texto.textContent = p.descricao;
+      caixa.appendChild(titulo);
+      caixa.appendChild(texto);
+      L.marker([p.lat, p.lon]).addTo(mapa).bindPopup(caixa);
+    });
+  })();
+  </script>
+{% endblock %}
