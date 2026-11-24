@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block titulo %}Preciso de ajuda · AlertAção{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+{% endblock %}
+{% block conteudo %}
+  <h1>Preciso de ajuda</h1>
+  <div class="tarefa">
+    <strong>{{ tarefa.modelo.titulo }}</strong>
+    <p>{{ tarefa.modelo.instrucao }}</p>
+  </div>
+  <p>Conte o que você não consegue resolver e marque o local no mapa. O pedido vai por e-mail ao órgão responsável.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
+
+    <label for="{{ form.categoria.id_for_label }}">Tipo de risco</label>
+    {{ form.categoria }}{{ form.categoria.errors }}
+
+    <label for="{{ form.descricao.id_for_label }}">Explique o problema (até 500 caracteres)</label>
+    {{ form.descricao }}{{ form.descricao.errors }}
+
+    <label for="{{ form.endereco.id_for_label }}">Referência (rua, número ou ponto conhecido)</label>
+    {{ form.endereco }}{{ form.endereco.errors }}
+
+    <label>Onde fica? Toque no mapa, dentro da linha azul, ou use a localização do aparelho.</label>
+    <div id="mapa"></div>
+    <button type="button" class="secundario" id="btn-gps">Usar minha localização</button>
+
+    <label class="consentimento">{{ form.risco_iminente }} {{ form.risco_iminente.label }}</label>
+
+    <p class="aviso">Este encaminhamento não substitui o registro oficial. Para registrar oficialmente, ligue 156 ou use o <a href="{{ link_sp156 }}">portal SP156</a>. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
+    <button type="submit">Pedir ajuda ao órgão</button>
+  </form>
+  <p><a href="{% url 'alerta_detalhe' tarefa.alerta_id %}">Voltar ao plano</a></p>
+
+  {{ regiao_geojson|json_script:"regiao-data" }}
+  <script>
+  (function () {
+    var regiao = JSON.parse(document.getElementById("regiao-data").textContent);
+    var mapa = L.map("mapa");
+    L.tileLayer("{{ tile_url|escapejs }}", {maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"}).addTo(mapa);
+    var contorno = L.geoJSON(regiao, {style: {color: "#1f4e9c", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
+    mapa.fitBounds(contorno.getBounds());
+    var marcador = null;
+    function definirPonto(lat, lon, precisao) {
+      document.getElementById("id_latitude").value = lat.toFixed(6);
+      document.getElementById("id_longitude").value = lon.toFixed(6);
+      document.getElementById("id_precisao_metros").value = (precisao === null ? "" : Math.round(precisao));
+      if (marcador) { marcador.setLatLng([lat, lon]); }
+      else {
+        marcador = L.marker([lat, lon], {draggable: true}).addTo(mapa);
+        marcador.on("dragend", function () { var p = marcador.getLatLng(); definirPonto(p.lat, p.lng, null); });
+      }
+    }
+    var latAtual = parseFloat(document.getElementById("id_latitude").value);
+    var lonAtual = parseFloat(document.getElementById("id_longitude").value);
+    if (!isNaN(latAtual) && !isNaN(lonAtual)) { definirPonto(latAtual, lonAtual, null); }
+    mapa.on("click", function (e) { definirPonto(e.latlng.lat, e.latlng.lng, null); });
+    document.getElementById("btn-gps").addEventListener("click", function () {
+      if (!navigator.geolocation) { alert("Seu navegador não permite localização. Toque no mapa para marcar o ponto."); return; }
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        if (pos.coords.accuracy > 100) {
+          alert("A precisão do GPS está ruim (" + Math.round(pos.coords.accuracy) + " m). Toque no mapa para ajustar o ponto.");
+          mapa.setView([pos.coords.latitude, pos.coords.longitude], 17);
+          return;
+        }
+        definirPonto(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
+        mapa.setView([pos.coords.latitude, pos.coords.longitude], 17);
+      }, function () { alert("Não foi possível obter a localização. Toque no mapa para marcar o ponto."); },
+      {enableHighAccuracy: true, timeout: 15000});
+    });
+  })();
+  </script>
+{% endblock %}

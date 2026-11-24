@@ -21,6 +21,7 @@
       <span class="badge">{{ p.categoria }}</span> <small>{{ p.quando }}</small>
       <p>{{ p.descricao }}</p>
       {% if p.endereco %}<p><small>Referência: {{ p.endereco }}</small></p>{% endif %}
+      <p><a href="{% url 'chamado_acionar_ponto' p.id %}">Acionar órgão</a></p>
     </div>
   {% empty %}
     <p>Nenhum risco ativo registrado{% if filtro %} nesta categoria{% endif %}.</p>

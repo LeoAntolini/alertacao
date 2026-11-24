@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Acionar órgão · AlertAção{% endblock %}
+{% block conteudo %}
+  <h1>Acionar o órgão responsável</h1>
+  <div class="tarefa">
+    <span class="badge">{{ ponto.get_categoria_display }}</span>
+    <p>{{ ponto.descricao }}</p>
+    {% if ponto.endereco %}<p><small>Referência: {{ ponto.endereco }}</small></p>{% endif %}
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <label for="{{ form.descricao.id_for_label }}">Explique o problema ao órgão</label>
+    {{ form.descricao }}{{ form.descricao.errors }}
+    <label class="consentimento">{{ form.risco_iminente }} {{ form.risco_iminente.label }}</label>
+    <p class="aviso">Este encaminhamento não substitui o registro oficial. Para registrar oficialmente, ligue 156 ou use o <a href="{{ link_sp156 }}">portal SP156</a>. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
+    <button type="submit">Enviar ao órgão</button>
+  </form>
+  <p><a href="{% url 'mapa' %}">Voltar ao mapa</a></p>
+{% endblock %}

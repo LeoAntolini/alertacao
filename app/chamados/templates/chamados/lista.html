@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}Meus chamados · AlertAção{% endblock %}
+{% block conteudo %}
+  <h1>Meus chamados</h1>
+  {% for c in chamados %}
+    <div class="tarefa">
+      <strong>{{ c.ponto.get_categoria_display }}</strong>
+      <span class="badge">{{ c.get_status_display }}</span>
+      {% if c.risco_iminente %}<span class="badge nivel-alto">Risco iminente</span>{% endif %}
+      <p>{{ c.descricao }}</p>
+      <p><small>Órgão: {{ c.destinatario.nome }}</small></p>
+      <ul>
+        <li>Aberto em {{ c.criado_em|date:"d/m/Y H:i" }}</li>
+        {% if c.encaminhado_em %}<li>Encaminhado em {{ c.encaminhado_em|date:"d/m/Y H:i" }}</li>{% endif %}
+        {% if c.em_atendimento_em %}<li>Em atendimento desde {{ c.em_atendimento_em|date:"d/m/Y H:i" }}</li>{% endif %}
+        {% if c.resolvido_em %}<li>Resolvido em {{ c.resolvido_em|date:"d/m/Y H:i" }} ({{ c.get_resolvido_por_display }})</li>{% endif %}
+      </ul>
+      {% if not c.finalizado %}
+        <form method="post" action="{% url 'chamado_confirmar' c.pk %}">{% csrf_token %}<button type="submit" class="secundario">Foi resolvido</button></form>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p>Você ainda não abriu nenhum chamado.</p>
+  {% endfor %}
+  <p class="aviso">O encaminhamento pelo AlertAção não substitui o registro oficial: ligue 156 ou use o <a href="{{ link_sp156 }}">portal SP156</a>.</p>
+  <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
+{% endblock %}

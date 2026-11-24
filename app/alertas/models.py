@@ -136,6 +136,10 @@ class Tarefa(models.Model):
         """RF16: 'Não se aplica'."""
         self._mudar(StatusTarefa.DISPENSADA, "dispensada_em", agora)
 
+    def escalar(self, agora=None):
+        """RF07: o morador pediu ajuda ao órgão (cria-se um chamado)."""
+        self._mudar(StatusTarefa.ESCALADA, "escalada_em", agora)
+
     def expirar(self, agora=None):
         """RN04: o alerta acabou e a tarefa não foi feita."""
         self._mudar(StatusTarefa.EXPIRADA, "expirada_em", agora)

@@ -216,5 +216,6 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-# Cole no FIM de app/config/settings.py:
 INSTALLED_APPS += ["pontos"]
+
+INSTALLED_APPS += ["chamados"]

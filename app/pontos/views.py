@@ -39,6 +39,7 @@ def mapa(request):
         pontos = pontos.filter(categoria=categoria)
     dados = [
         {
+            "id": str(p.pk),
             "lat": p.localizacao.y,
             "lon": p.localizacao.x,
             "categoria": p.get_categoria_display(),

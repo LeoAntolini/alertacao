@@ -26,8 +26,11 @@
       {% if t.status == "PENDENTE" %}
         <form method="post" action="{% url 'tarefa_concluir' t.pk %}">{% csrf_token %}<button type="submit">Concluí</button></form>
         <form method="post" action="{% url 'tarefa_dispensar' t.pk %}">{% csrf_token %}<button type="submit" class="secundario">Não se aplica</button></form>
+        <p><a class="botao" href="{% url 'chamado_pedir_ajuda' t.pk %}">Preciso de ajuda</a></p>
       {% elif t.status == "CONCLUIDA" %}
         <p>Concluída em {{ t.concluida_em|date:"d/m/Y H:i" }}.</p>
+      {% elif t.status == "ESCALADA" %}
+        <p>Você pediu ajuda ao órgão responsável. <a href="{% url 'meus_chamados' %}">Acompanhar o chamado</a></p>
       {% endif %}
     </div>
   {% endfor %}

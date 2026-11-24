@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Pedido de ajuda · AlertAção{% endblock %}
+{% block conteudo %}
+  <h1>Pedido de ajuda recebido pelo AlertAção</h1>
+  {% if mensagem %}<p class="aviso">{{ mensagem }}</p>{% endif %}
+  <div class="tarefa">
+    <p><strong>Categoria:</strong> {{ ponto.get_categoria_display }}<br>
+    <strong>Região:</strong> {{ ponto.regiao.nome }}<br>
+    <strong>Risco iminente:</strong> {% if chamado.risco_iminente %}SIM{% else %}não informado{% endif %}<br>
+    <strong>Status atual:</strong> {{ chamado.get_status_display }}</p>
+    <p>{{ chamado.descricao }}</p>
+    <p><strong>Referência:</strong> {{ ponto.endereco|default:"não informada" }}<br>
+    <strong>Localização:</strong> {{ lat }}, {{ lon }} · <a href="{{ mapa }}">ver no mapa</a></p>
+    <p><small>Aberto em {{ chamado.criado_em|date:"d/m/Y H:i" }}.</small></p>
+  </div>
+  {% if encerrado %}
+    <p>Este chamado foi encerrado. Obrigado.</p>
+  {% else %}
+    <p>Informe o andamento (sem login):</p>
+    <form method="post">{% csrf_token %}<input type="hidden" name="acao" value="EM_ATENDIMENTO"><button type="submit">Em atendimento</button></form>
+    <form method="post">{% csrf_token %}<input type="hidden" name="acao" value="RESOLVIDO"><button type="submit">Resolvido</button></form>
+    <form method="post">{% csrf_token %}<input type="hidden" name="acao" value="NAO_PROCEDE"><button type="submit" class="secundario">Não procede</button></form>
+  {% endif %}
+  <p class="aviso">Este pedido foi gerado pelo AlertAção, um projeto acadêmico de moradores, e não substitui o registro oficial.</p>
+{% endblock %}
