@@ -6,14 +6,14 @@
 {% endblock %}
 {% block conteudo %}
   <h1>Riscos em {{ regiao.nome }}</h1>
-  <p>
+  <p class="filtros">
     <a class="badge{% if not filtro %} nivel-moderado{% endif %}" href="{% url 'mapa' %}">Todos</a>
     {% for valor, nome in categorias %}
       <a class="badge{% if filtro == valor %} nivel-moderado{% endif %}" href="{% url 'mapa' %}?categoria={{ valor }}">{{ nome }}</a>
     {% endfor %}
   </p>
   <div id="mapa"></div>
-  <p><a class="botao" href="{% url 'ponto_novo' %}">Relatar um risco</a></p>
+  <p><a class="botao" href="{% url 'ponto_novo' %}">+ Relatar um risco</a></p>
 
   <h2>{{ pontos|length }} risco{{ pontos|length|pluralize }} ativo{{ pontos|length|pluralize }}</h2>
   {% for p in pontos %}
@@ -21,10 +21,10 @@
       <span class="badge">{{ p.categoria }}</span> <small>{{ p.quando }}</small>
       <p>{{ p.descricao }}</p>
       {% if p.endereco %}<p><small>Referência: {{ p.endereco }}</small></p>{% endif %}
-      <p><a href="{% url 'chamado_acionar_ponto' p.id %}">Acionar órgão</a></p>
+      <div class="acoes"><a class="botao secundario" href="{% url 'chamado_acionar_ponto' p.id %}">Acionar órgão</a></div>
     </div>
   {% empty %}
-    <p>Nenhum risco ativo registrado{% if filtro %} nesta categoria{% endif %}.</p>
+    <p class="vazio">Nenhum risco ativo registrado{% if filtro %} nesta categoria{% endif %}.</p>
   {% endfor %}
   <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
 
@@ -39,7 +39,7 @@
       maxZoom: 19,
       attribution: "&copy; OpenStreetMap contributors"
     }).addTo(mapa);
-    var contorno = L.geoJSON(regiao, {style: {color: "#1f4e9c", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
+    var contorno = L.geoJSON(regiao, {style: {color: "#1D5BD6", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
     mapa.fitBounds(contorno.getBounds());
     pontos.forEach(function (p) {
       var caixa = document.createElement("div");

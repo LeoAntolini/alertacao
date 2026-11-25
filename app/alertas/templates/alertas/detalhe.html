@@ -2,31 +2,37 @@
 {% block titulo %}Alerta · AlertAção{% endblock %}
 {% block conteudo %}
   <h1>{{ alerta.get_evento_display }} em {{ alerta.regiao.nome }}</h1>
-  <p>
-    <span class="badge nivel-{{ alerta.nivel|lower }}">Nível {{ alerta.get_nivel_display }}</span>
+  <div class="hero hero-info hero-{{ alerta.nivel|lower }}">
+    <span class="badge">Nível {{ alerta.get_nivel_display }}</span>
     <span class="badge">{{ estagio.label }}</span>
-  </p>
-  <p><strong>Previsto:</strong> de {{ alerta.janela_inicio|date:"d/m/Y H:i" }} até {{ alerta.janela_fim|date:"d/m/Y H:i" }}</p>
-  <p><strong>Antecedência restante:</strong> {{ restante_texto }}</p>
-  <p><strong>Origem:</strong> {{ alerta.get_origem_display }}{% if alerta.fonte %} ({{ alerta.fonte }}){% endif %}</p>
+    <p style="margin-top:10px"><strong>Previsto:</strong> de {{ alerta.janela_inicio|date:"d/m/Y H:i" }} até {{ alerta.janela_fim|date:"d/m/Y H:i" }}</p>
+    <p><strong>Antecedência restante:</strong> {{ restante_texto }}</p>
+    <p><small style="color:inherit;opacity:.9"><strong>Origem:</strong> {{ alerta.get_origem_display }}{% if alerta.fonte %} ({{ alerta.fonte }}){% endif %}</small></p>
+  </div>
   <p>{{ alerta.mensagem|linebreaksbr }}</p>
-  <p class="aviso">Aviso preventivo comunitário. Não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
+  <p class="aviso">
+  	Aviso preventivo comunitário: <strong>Não substitui alertas oficiais</strong> da Defesa Civil.
+ 	Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).
+  </p>
 
   <h2>Seu plano de prevenção</h2>
   {% if total %}
     <p><strong>{{ concluidas }} de {{ total }}</strong> tarefas concluídas.</p>
+    <div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ concluidas }}"><span style="width: {% widthratio concluidas total 100 %}%"></span></div>
   {% else %}
     <p>Nenhuma tarefa para este alerta.</p>
   {% endif %}
 
   {% for t in tarefas %}
     <div class="tarefa tarefa-{{ t.status|lower }}">
-      <strong>{{ t.modelo.titulo }}</strong> <span class="badge">{{ t.get_status_display }}</span>
+      <strong>{{ t.modelo.titulo }}</strong> <span class="badge{% if t.status == 'CONCLUIDA' %} ok{% endif %}">{{ t.get_status_display }}</span>
       <p>{{ t.modelo.instrucao }}</p>
       {% if t.status == "PENDENTE" %}
-        <form method="post" action="{% url 'tarefa_concluir' t.pk %}">{% csrf_token %}<button type="submit">Concluí</button></form>
-        <form method="post" action="{% url 'tarefa_dispensar' t.pk %}">{% csrf_token %}<button type="submit" class="secundario">Não se aplica</button></form>
-        <p><a class="botao" href="{% url 'chamado_pedir_ajuda' t.pk %}">Preciso de ajuda</a></p>
+        <div class="acoes">
+          <form method="post" action="{% url 'tarefa_concluir' t.pk %}">{% csrf_token %}<button type="submit">Concluí</button></form>
+          <form method="post" action="{% url 'tarefa_dispensar' t.pk %}">{% csrf_token %}<button type="submit" class="secundario">Não se aplica</button></form>
+          <a class="botao secundario" href="{% url 'chamado_pedir_ajuda' t.pk %}">Preciso de ajuda</a>
+        </div>
       {% elif t.status == "CONCLUIDA" %}
         <p>Concluída em {{ t.concluida_em|date:"d/m/Y H:i" }}.</p>
       {% elif t.status == "ESCALADA" %}

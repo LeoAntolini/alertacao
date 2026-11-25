@@ -13,7 +13,7 @@
       <p><small>Recebida em {{ n.enviada_em|date:"d/m/Y H:i" }}</small></p>
     </div>
   {% empty %}
-    <p>Você ainda não recebeu notificações.</p>
+    <p class="vazio">Você ainda não recebeu notificações.</p>
   {% endfor %}
   <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
 {% endblock %}
