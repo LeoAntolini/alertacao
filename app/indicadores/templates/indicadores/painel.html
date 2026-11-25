@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Painel de indicadores · AlertAção{% endblock %}
+{% block conteudo %}
+  <h1>Painel de indicadores</h1>
+  <p>Período:
+    {% for p in periodos %}
+      <a class="badge{% if p == dados.dias %} nivel-moderado{% endif %}" href="{% url 'painel' %}?dias={{ p }}">{{ p }} dias</a>
+    {% endfor %}
+  </p>
+
+  <h2>Resumo do período</h2>
+  <div class="tarefa">
+    <p><strong>{{ dados.alertas_publicados }}</strong> alertas publicados<br>
+    <strong>{{ dados.tarefas_concluidas }}</strong> tarefas concluídas<br>
+    <strong>{{ dados.chamados_abertos }}</strong> chamados abertos</p>
+  </div>
+
+  <h2>Indicadores</h2>
+  {% for l in linhas %}
+    <div class="tarefa">
+      <strong>{{ l.codigo }} · {{ l.nome }}</strong><br>
+      {% if l.valor is None %}
+        <span class="badge">sem dados no período</span>
+      {% else %}
+        <span class="badge nivel-moderado">{{ l.valor|floatformat:1 }} {{ l.unidade }}</span>
+      {% endif %}
+      <p><small>{{ l.formula }}</small></p>
+    </div>
+  {% endfor %}
+
+  <h2>I7 · Concentração de riscos ativos</h2>
+  {% for c in concentracao %}
+    <div class="tarefa"><strong>{{ c.regiao }}</strong> · {{ c.categoria }}: {{ c.n }}</div>
+  {% empty %}
+    <p>Nenhum ponto de risco ativo.</p>
+  {% endfor %}
+
+  <p class="aviso">Resultados obtidos com dados de teste e demonstração não são prova de impacto: registre-os como resultados obtidos e separe os benefícios esperados (Etapa 8).</p>
+  <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>
+{% endblock %}

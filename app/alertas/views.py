@@ -7,12 +7,14 @@ from django.views.decorators.http import require_POST
 
 from .choices import StatusAlerta, StatusTarefa
 from .models import Alerta, Tarefa
+from .servicos import encerrar_alertas
 from .utils import formatar_duracao
 
 
 @login_required
 def detalhe(request, pk):
     """RF15: alerta ativo da região do morador, com o plano de prevenção dele."""
+    encerrar_alertas()  # RF21: o estado também é avaliado na leitura
     alerta = get_object_or_404(
         Alerta.objects.select_related("regiao"),
         pk=pk, status=StatusAlerta.PUBLICADO, regiao_id=request.user.regiao_id,

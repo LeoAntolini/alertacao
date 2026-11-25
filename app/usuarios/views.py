@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from alertas.choices import StatusAlerta
 from alertas.models import Alerta
+from alertas.servicos import encerrar_alertas
 from regioes.models import Regiao
 
 from .forms import CadastroForm
@@ -14,6 +15,7 @@ from .models import Papel, Usuario
 
 @login_required
 def inicio(request):
+    encerrar_alertas()  # RF21: o estado também é avaliado na leitura
     alertas_ativos = []
     if request.user.regiao_id:
         alertas_ativos = Alerta.objects.filter(

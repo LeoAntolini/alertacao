@@ -219,3 +219,5 @@ if not DEBUG:
 INSTALLED_APPS += ["pontos"]
 
 INSTALLED_APPS += ["chamados"]
+
+INSTALLED_APPS += ["indicadores"]

@@ -9,7 +9,8 @@ from usuarios.models import Papel, Usuario
 from notificacoes.servicos import enviar_pendentes, notificar_alerta
 
 from .choices import CATEGORIAS_SEM_TAREFA, StatusAlerta
-from .models import ModeloTarefa, Tarefa
+from .choices import StatusTarefa
+from .models import Alerta, ModeloTarefa, Tarefa
 
 
 @dataclass
@@ -55,3 +56,21 @@ def publicar_alerta(alerta, responsavel, agora=None):
     return ResultadoPublicacao(
         moradores=len(moradores), tarefas=len(tarefas), emails_enviados=enviados, emails_com_falha=falhas
     )
+
+
+def encerrar_alertas(agora=None):
+    """RF21: encerra os alertas PUBLICADOS cujo fim já passou e expira as tarefas pendentes deles (RN04).
+
+    Retorna (alertas encerrados, tarefas expiradas). Pode rodar quantas vezes quiser.
+    """
+    agora = agora or timezone.now()
+    vencidos = list(Alerta.objects.filter(status=StatusAlerta.PUBLICADO, janela_fim__lte=agora))
+    if not vencidos:
+        return 0, 0
+    ids = [a.pk for a in vencidos]
+    with transaction.atomic():
+        Alerta.objects.filter(pk__in=ids).update(status=StatusAlerta.ENCERRADO, encerrado_em=agora)
+        expiradas = Tarefa.objects.filter(alerta_id__in=ids, status=StatusTarefa.PENDENTE).update(
+            status=StatusTarefa.EXPIRADA, expirada_em=agora
+        )
+    return len(ids), expiradas

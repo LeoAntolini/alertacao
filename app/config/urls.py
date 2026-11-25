@@ -18,4 +18,5 @@ urlpatterns = [
     path("", include("notificacoes.urls")),
     path("", include("pontos.urls")),
     path("", include("chamados.urls")),
+    path("", include("indicadores.urls")),
 ]

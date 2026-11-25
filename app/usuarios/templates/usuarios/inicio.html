@@ -25,6 +25,9 @@
 
   <p><a class="botao" href="{% url 'mapa' %}">Mapa de riscos</a></p>
   <p><a class="botao" href="{% url 'ponto_novo' %}">Relatar um risco</a></p>
+  {% if user.papel == "RESPONSAVEL_SISTEMA" %}
+    <p><a class="botao" href="{% url 'painel' %}">Painel de indicadores</a></p>
+  {% endif %}
   <p><a href="{% url 'meus_chamados' %}">Meus chamados</a></p>
   <p><a href="{% url 'notificacoes' %}">Ver minhas notificações</a></p>
   <p class="aviso">Aviso preventivo comunitário. Não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
