@@ -9,7 +9,7 @@
       {% if c.risco_iminente %}<span class="badge nivel-alto">Risco iminente</span>{% endif %}
       <p>{{ c.descricao }}</p>
       <p><small>Órgão: {{ c.destinatario.nome }}</small></p>
-      <ul>
+      <ul class="linha-tempo">
         <li>Aberto em {{ c.criado_em|date:"d/m/Y H:i" }}</li>
         {% if c.encaminhado_em %}<li>Encaminhado em {{ c.encaminhado_em|date:"d/m/Y H:i" }}</li>{% endif %}
         {% if c.em_atendimento_em %}<li>Em atendimento desde {{ c.em_atendimento_em|date:"d/m/Y H:i" }}</li>{% endif %}
@@ -20,7 +20,7 @@
       {% endif %}
     </div>
   {% empty %}
-    <p>Você ainda não abriu nenhum chamado.</p>
+    <p class="vazio">Você ainda não abriu nenhum chamado.</p>
   {% endfor %}
   <p class="aviso">O encaminhamento pelo AlertAção não substitui o registro oficial: ligue 156 ou use o <a href="{{ link_sp156 }}">portal SP156</a>.</p>
   <p><a href="{% url 'inicio' %}">Voltar ao início</a></p>

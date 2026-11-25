@@ -1,0 +1,35 @@
+{% extends "admin/base.html" %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | AlertAção · Administração{% endblock %}
+{% block extrastyle %}{{ block.super }}
+<style>
+  :root, html[data-theme="light"], html[data-theme="dark"] {
+    --primary: #0B3D91; --secondary: #1D5BD6; --accent: #F59E0B; --primary-fg: #fff;
+    --header-color: #dbe7ff; --header-branding-color: #fff; --header-bg: #0B3D91; --header-link-color: #fff;
+    --breadcrumbs-fg: #dbe7ff; --breadcrumbs-link-fg: #fff; --breadcrumbs-bg: #1D5BD6;
+    --link-fg: #1D5BD6; --link-hover-color: #0B3D91; --link-selected-fg: #0B3D91;
+    --button-bg: #1D5BD6; --button-hover-bg: #0B3D91; --default-button-bg: #0B3D91; --default-button-hover-bg: #1D5BD6;
+    --object-tools-bg: #0E9F9A; --object-tools-hover-bg: #0B7A76; --selected-row: #E8F0FE;
+    --body-bg: #F4F7FB; --darkened-bg: #EEF3FB; --border-color: #E2E8F0;
+  }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  #header { background: linear-gradient(135deg, #0B3D91, #1D5BD6); box-shadow: 0 2px 10px rgba(11,61,145,.25); padding: 12px 24px; }
+  #site-name a, #site-name a:visited { font-weight: 800; letter-spacing: -.01em; font-size: 1.2rem; }
+  #user-tools a { border-bottom: 0; font-weight: 600; }
+  div.breadcrumbs { padding: 10px 24px; }
+  .module { border-radius: 14px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 4px 14px rgba(15,23,42,.06); background: #fff; }
+  .module h2, .module caption, .inline-group h2 { background: #1D5BD6; color: #fff; font-weight: 700; }
+  .module caption a, .module caption a:link, .module caption a:visited { color: #fff; }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button { border-radius: 10px; font-weight: 700; }
+  .object-tools a { border-radius: 999px; font-weight: 700; }
+  input[type=text], input[type=password], input[type=email], input[type=number], input[type=url], textarea, select { border-radius: 8px; border: 1.5px solid #CBD5E1; }
+  input:focus, textarea:focus, select:focus { border-color: #1D5BD6; outline: 3px solid #BFD3FB; }
+  #changelist-filter { border-radius: 14px; overflow: hidden; }
+  .login #header { justify-content: center; }
+  .login #container { border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 14px rgba(15,23,42,.1); }
+</style>
+{% endblock %}
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">AlertAção · Administração</a></h1>
+{% endblock %}
+{% block userlinks %}<a href="{% url 'inicio' %}">Voltar ao site</a> / {{ block.super }}{% endblock %}
+{% block nav-global %}{% endblock %}

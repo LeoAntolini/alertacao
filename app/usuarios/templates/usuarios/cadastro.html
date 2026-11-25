@@ -4,9 +4,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 {% endblock %}
+{% block mainclass %} class="estreito"{% endblock %}
 {% block conteudo %}
   <h1>Criar conta</h1>
-  <form method="post" novalidate>
+  <p class="subtitulo">Leva um minuto. Usamos sua localização só para ligar você à sua região.</p>
+  <form method="post" novalidate class="painel-form">
     {% csrf_token %}
     {{ form.non_field_errors }}
     {% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
@@ -45,7 +47,7 @@
 
     <button type="submit">Criar conta</button>
   </form>
-  <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a>.</p>
+  <p style="margin-top:16px">Já tem conta? <a href="{% url 'login' %}">Entrar</a>.</p>
 
   {{ regioes|json_script:"regioes-data" }}
   <script>

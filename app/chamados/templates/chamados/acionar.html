@@ -7,7 +7,7 @@
     <p>{{ ponto.descricao }}</p>
     {% if ponto.endereco %}<p><small>Referência: {{ ponto.endereco }}</small></p>{% endif %}
   </div>
-  <form method="post">
+  <form method="post" class="painel-form">
     {% csrf_token %}
     {{ form.non_field_errors }}
     <label for="{{ form.descricao.id_for_label }}">Explique o problema ao órgão</label>

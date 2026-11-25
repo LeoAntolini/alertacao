@@ -2,17 +2,17 @@
 {% block titulo %}Painel de indicadores · AlertAção{% endblock %}
 {% block conteudo %}
   <h1>Painel de indicadores</h1>
-  <p>Período:
+  <p class="filtros">Período:
     {% for p in periodos %}
       <a class="badge{% if p == dados.dias %} nivel-moderado{% endif %}" href="{% url 'painel' %}?dias={{ p }}">{{ p }} dias</a>
     {% endfor %}
   </p>
 
   <h2>Resumo do período</h2>
-  <div class="tarefa">
-    <p><strong>{{ dados.alertas_publicados }}</strong> alertas publicados<br>
-    <strong>{{ dados.tarefas_concluidas }}</strong> tarefas concluídas<br>
-    <strong>{{ dados.chamados_abertos }}</strong> chamados abertos</p>
+  <div class="resumo">
+    <div class="card"><span class="numero-grande">{{ dados.alertas_publicados }}</span><br><small>alertas publicados</small></div>
+    <div class="card"><span class="numero-grande">{{ dados.tarefas_concluidas }}</span><br><small>tarefas concluídas</small></div>
+    <div class="card"><span class="numero-grande">{{ dados.chamados_abertos }}</span><br><small>chamados abertos</small></div>
   </div>
 
   <h2>Indicadores</h2>

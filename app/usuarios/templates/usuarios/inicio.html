@@ -3,34 +3,40 @@
 {% block conteudo %}
   <h1>Olá, {{ user.nome|default:user.email }}</h1>
   {% if user.regiao %}
-    <p>Sua região: <strong>{{ user.regiao.nome }}</strong> ({{ user.regiao.cidade }}).</p>
-    <p>Local de referência: {{ user.endereco }}</p>
+    <p class="subtitulo">Sua região: <strong>{{ user.regiao.nome }}</strong> ({{ user.regiao.cidade }}).<br>
+    <small>Local de referência: {{ user.endereco }}</small></p>
   {% else %}
-    <p>Seu usuário não está ligado a uma região.</p>
+    <p class="subtitulo">Seu usuário não está ligado a uma região.</p>
   {% endif %}
 
   <h2>Alertas ativos</h2>
   {% if alertas_ativos %}
     {% for a in alertas_ativos %}
-      <div class="tarefa">
-        <strong><a href="{% url 'alerta_detalhe' a.pk %}">{{ a.get_evento_display }}</a></strong>
-        <span class="badge nivel-{{ a.nivel|lower }}">{{ a.get_nivel_display }}</span>
+      <div class="hero hero-{{ a.nivel|lower }}">
+        <span class="badge">Nível {{ a.get_nivel_display }}</span>
         <span class="badge">{{ a.estagio.label }}</span>
+        <h2>{{ a.get_evento_display }}</h2>
         <p>Início previsto: {{ a.janela_inicio|date:"d/m/Y H:i" }}</p>
+        <a class="btn-claro" href="{% url 'alerta_detalhe' a.pk %}">Ver meu plano</a>
       </div>
     {% endfor %}
   {% else %}
-    <p>Nenhum alerta ativo para a sua região no momento.</p>
+    <p class="vazio">Nenhum alerta ativo para a sua região no momento. Tudo tranquilo por aqui.</p>
   {% endif %}
 
-  <p><a class="botao" href="{% url 'mapa' %}">Mapa de riscos</a></p>
-  <p><a class="botao" href="{% url 'ponto_novo' %}">Relatar um risco</a></p>
+  <div class="grade">
+    <a class="atalho" href="{% url 'mapa' %}"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>Mapa de riscos<small>Veja o que já foi relatado</small></a>
+    <a class="atalho" href="{% url 'ponto_novo' %}"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Relatar um risco<small>Bueiro, encosta, árvore…</small></a>
+    <a class="atalho" href="{% url 'meus_chamados' %}"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 01-11.5 7.2L4 21l1.8-5.3A8 8 0 1121 12z"/></svg></span>Meus chamados<small>Acompanhe o órgão</small></a>
+    <a class="atalho" href="{% url 'notificacoes' %}"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 004 0"/></svg></span>Ver minhas notificações<small>Avisos recebidos</small></a>
+  </div>
   {% if user.papel == "RESPONSAVEL_SISTEMA" %}
-    <p><a class="botao" href="{% url 'painel' %}">Painel de indicadores</a></p>
+    <p><a class="botao secundario" href="{% url 'painel' %}">Painel de indicadores</a></p>
   {% endif %}
-  <p><a href="{% url 'meus_chamados' %}">Meus chamados</a></p>
-  <p><a href="{% url 'notificacoes' %}">Ver minhas notificações</a></p>
-  <p class="aviso">Aviso preventivo comunitário. Não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
+  {% if user.is_staff %}
+    <p><a class="botao secundario" href="{% url 'admin:index' %}">Administração do sistema</a></p>
+  {% endif %}
+  <p class="aviso">Aviso preventivo comunitário: não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros).</p>
   <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <button type="submit" class="secundario">Sair</button>

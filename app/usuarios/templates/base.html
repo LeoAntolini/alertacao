@@ -2,41 +2,163 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B3D91">
   <title>{% block titulo %}AlertAção{% endblock %}</title>
   <style>
-    :root { --azul: #1f4e9c; --borda: #c9d3e3; --erro: #b3261e; }
+    :root {
+      --azul: #0B3D91; --azul-2: #1D5BD6; --azul-claro: #E8F0FE; --turquesa: #0E9F9A;
+      --laranja-claro: #FEF3C7; --vermelho: #DC2626; --vermelho-claro: #FEE2E2; --verde-claro: #DCFCE7;
+      --tinta: #0F172A; --tinta-2: #475569; --linha: #E2E8F0; --fundo: #F4F7FB; --raio: 16px;
+      --sombra: 0 1px 2px rgba(15,23,42,.06), 0 4px 14px rgba(15,23,42,.06);
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f4f7fb; color: #1b2433; }
-    header { background: var(--azul); color: #fff; padding: 12px 16px; font-weight: 700; }
-    main { max-width: 480px; margin: 0 auto; padding: 16px; }
-    h1 { font-size: 1.4rem; margin: 8px 0 16px; }
-    label { display: block; margin: 12px 0 4px; font-weight: 600; }
-    input[type=text], input[type=email], input[type=password], select { width: 100%; padding: 12px; font-size: 1rem; border: 1px solid var(--borda); border-radius: 8px; background: #fff; }
-    button, .botao { display: inline-block; width: 100%; padding: 14px; margin-top: 14px; font-size: 1rem; font-weight: 700; color: #fff; background: var(--azul); border: 0; border-radius: 8px; text-align: center; text-decoration: none; cursor: pointer; }
-    button.secundario { background: #fff; color: var(--azul); border: 1px solid var(--azul); }
-    .erro, .errorlist { color: var(--erro); margin: 6px 0; padding-left: 0; list-style: none; font-size: .95rem; }
-    .aviso { background: #fff6e5; border: 1px solid #e0a030; border-radius: 8px; padding: 10px; font-size: .9rem; margin: 12px 0; }
-    .consentimento label { font-weight: 400; display: flex; gap: 8px; align-items: flex-start; }
-    #mapa { height: 280px; border-radius: 8px; border: 1px solid var(--borda); margin-top: 8px; }
-    a { color: var(--azul); }
-    .mensagens { list-style: none; padding: 0; margin: 0 0 12px; }
-    .mensagens li { padding: 10px; border-radius: 8px; margin-bottom: 6px; background: #eef3fb; border: 1px solid var(--borda); }
-    .mensagens li.success { background: #e7f5ea; border-color: #9ccfa6; }
-    .mensagens li.error { background: #fdeceb; border-color: #e5a5a1; color: var(--erro); }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #e3e9f4; font-size: .85rem; font-weight: 600; }
-    .nivel-baixo { background: #fff3c4; } .nivel-moderado { background: #ffd9a8; } .nivel-alto { background: #f5b5b0; }
-    .tarefa { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
-    .tarefa form { margin: 0; }
-    .tarefa-concluida { background: #f0f8f1; } .tarefa-dispensada, .tarefa-expirada { opacity: .7; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--fundo); color: var(--tinta); line-height: 1.5; padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+    a { color: var(--azul-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 { font-size: 1.6rem; line-height: 1.2; margin: 4px 0 14px; letter-spacing: -.02em; font-weight: 800; }
+    h2 { font-size: 1.1rem; margin: 26px 0 10px; letter-spacing: -.01em; font-weight: 700; }
+    p { margin: 0 0 10px; }
+    small { color: var(--tinta-2); }
+    :focus-visible { outline: 3px solid #93B4F5; outline-offset: 2px; }
+
+    /* Topo */
+    .topo { position: sticky; top: 0; z-index: 20; background: linear-gradient(135deg, var(--azul), var(--azul-2)); color: #fff; box-shadow: 0 2px 10px rgba(11,61,145,.25); }
+    .topo-in { max-width: 960px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 14px; }
+    .marca { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 800; font-size: 1.15rem; letter-spacing: -.01em; }
+    .marca:hover { text-decoration: none; }
+    .marca svg { width: 30px; height: 30px; flex: none; }
+    .nav-desk { display: none; margin-left: auto; gap: 4px; }
+    .nav-desk a { color: #dbe7ff; padding: 8px 12px; border-radius: 999px; font-weight: 600; font-size: .95rem; }
+    .nav-desk a:hover, .nav-desk a.ativo { background: rgba(255,255,255,.16); color: #fff; text-decoration: none; }
+    main { max-width: 960px; margin: 0 auto; padding: 18px 16px; }
+    main.estreito { max-width: 480px; }
+
+    /* Cartões e blocos */
+    .card, .tarefa { background: #fff; border: 1px solid var(--linha); border-radius: 14px; box-shadow: var(--sombra); padding: 14px; margin: 0 0 12px; }
+    .tarefa strong { font-size: 1rem; }
+    .tarefa form { margin: 0; display: inline-block; }
+    .tarefa-concluida, .tarefa-concluida.tarefa { background: #F0FDF4; border-color: #BBF7D0; }
+    .tarefa-dispensada, .tarefa-expirada { opacity: .7; }
+    .tarefa .acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+    .tarefa .acoes p { margin: 0; }
+    .grade { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; margin: 0 0 14px; }
+    .atalho { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; background: #fff; border: 1px solid var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); padding: 14px; color: var(--tinta); font-weight: 700; }
+    .atalho:hover { text-decoration: none; border-color: var(--azul-2); }
+    .atalho .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--azul-claro); color: var(--azul); }
+    .atalho .ico svg { width: 22px; height: 22px; }
+    .atalho small { font-weight: 500; }
+    .subtitulo { color: var(--tinta-2); margin-top: -8px; }
+    .vazio { text-align: center; color: var(--tinta-2); padding: 22px 12px; background: #fff; border: 1px dashed #CBD5E1; border-radius: 14px; }
+
+    /* Destaque do alerta */
+    .hero { border-radius: 20px; padding: 18px; color: #fff; box-shadow: var(--sombra); margin: 0 0 14px; background: linear-gradient(135deg, #0B3D91, #1D5BD6); }
+    .hero-baixo { background: linear-gradient(135deg, #CA8A04, #EAB308); color: #422006; }
+    .hero-moderado { background: linear-gradient(135deg, #F59E0B, #EA580C); }
+    .hero-alto { background: linear-gradient(135deg, #DC2626, #991B1B); }
+    .hero h2 { margin: 6px 0 4px; font-size: 1.3rem; font-weight: 800; color: inherit; }
+    .hero p { margin: 0 0 6px; }
+    .hero a.btn-claro { display: inline-flex; margin-top: 8px; padding: 11px 16px; border-radius: 12px; background: rgba(255,255,255,.96); color: #7C2D12; font-weight: 700; }
+    .hero a.btn-claro:hover { text-decoration: none; }
+    .hero .badge { background: rgba(255,255,255,.25); color: inherit; }
+    .hero-info p { font-size: .95rem; }
+
+    /* Selos e filtros */
+    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; background: #E2E8F0; color: var(--tinta); font-size: .8rem; font-weight: 700; }
+    .nivel-baixo { background: #FEF9C3; color: #854D0E; } .nivel-moderado { background: #FEF3C7; color: #92400E; } .nivel-alto { background: var(--vermelho-claro); color: #991B1B; }
+    .badge.ok { background: var(--verde-claro); color: #166534; }
+    .filtros { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 0 0 10px; }
+    .filtros a { white-space: nowrap; padding: 6px 12px; }
+    .filtros a.badge.nivel-moderado { background: var(--azul); color: #fff; }
+
+    /* Progresso */
+    .progresso { height: 10px; background: #E2E8F0; border-radius: 999px; overflow: hidden; margin: 6px 0 14px; }
+    .progresso > span { display: block; height: 100%; background: linear-gradient(90deg, var(--turquesa), #34D399); border-radius: 999px; }
+
+    /* Botões */
+    button, .botao { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; padding: 12px 16px; margin-top: 12px; font: inherit; font-size: 1rem; font-weight: 700; color: #fff; background: var(--azul-2); border: 0; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer; }
+    button:hover, .botao:hover { filter: brightness(1.07); text-decoration: none; }
+    button.secundario, .botao.secundario { background: #fff; color: var(--azul); border: 1.5px solid var(--azul-2); }
+    .tarefa button, .tarefa .botao { width: auto; margin-top: 0; min-height: 44px; padding: 10px 14px; font-size: .95rem; }
+    .tarefa .acoes form { display: inline-block; }
+
+    /* Formulários */
+    label { display: block; margin: 14px 0 6px; font-weight: 700; font-size: .95rem; }
+    input[type=text], input[type=email], input[type=password], select, textarea { width: 100%; padding: 12px 14px; font: inherit; font-size: 1rem; border: 1.5px solid #CBD5E1; border-radius: 12px; background: #fff; color: var(--tinta); }
+    input:focus, select:focus, textarea:focus { outline: 3px solid #BFD3FB; border-color: var(--azul-2); }
+    input[type=checkbox] { width: 20px; height: 20px; margin-top: 2px; flex: none; accent-color: var(--azul-2); }
+    .consentimento label { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; }
+    .erro, .errorlist { color: var(--vermelho); margin: 6px 0; padding-left: 0; list-style: none; font-size: .9rem; font-weight: 600; }
+    .painel-form { background: #fff; border: 1px solid var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); padding: 4px 16px 18px; }
+    #mapa { height: 320px; border-radius: var(--raio); border: 1px solid var(--linha); box-shadow: var(--sombra); margin-top: 8px; overflow: hidden; }
+
+    /* Avisos e mensagens */
+    .aviso { background: var(--laranja-claro); border: 1px solid #FCD34D; border-radius: 12px; padding: 10px 12px; font-size: .9rem; color: #78350F; margin: 12px 0; }
+    .aviso a { color: #7C2D12; text-decoration: underline; }
+    .mensagens { list-style: none; padding: 0; margin: 0 0 14px; }
+    .mensagens li { padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; background: var(--azul-claro); border: 1px solid #BFD3FB; font-weight: 600; }
+    .mensagens li.success { background: var(--verde-claro); border-color: #86EFAC; color: #14532D; }
+    .mensagens li.error { background: var(--vermelho-claro); border-color: #FCA5A5; color: #7F1D1D; }
+    .mensagens li.warning { background: var(--laranja-claro); border-color: #FCD34D; color: #78350F; }
+    .linha-tempo { margin: 8px 0 0; padding-left: 18px; color: var(--tinta-2); font-size: .9rem; }
+    .indicador { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .numero-grande { font-size: 1.8rem; font-weight: 800; color: var(--azul); line-height: 1.1; }
+    .resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+    .resumo .card { margin: 0; text-align: center; }
+
+    /* Navegação inferior (celular) */
+    .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: #fff; border-top: 1px solid var(--linha); display: flex; justify-content: space-around; padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -4px 14px rgba(15,23,42,.06); }
+    .tabbar a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; color: var(--tinta-2); font-size: .72rem; font-weight: 700; border-radius: 12px; }
+    .tabbar a svg { width: 24px; height: 24px; }
+    .tabbar a.ativo { color: var(--azul-2); background: var(--azul-claro); }
+    .tabbar a:hover { text-decoration: none; }
+
+    @media (min-width: 760px) {
+      body { padding-bottom: 0; }
+      .tabbar { display: none; }
+      .nav-desk { display: flex; }
+      .grade { grid-template-columns: repeat(4, 1fr); }
+      main.estreito { padding-top: 32px; }
+    }
   </style>
   {% block head %}{% endblock %}
 </head>
 <body>
-  <header>AlertAção</header>
-  <main>
-    {% if messages %}<ul class="mensagens">{% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
+  {% with rota=request.resolver_match.url_name %}
+  <header class="topo">
+    <div class="topo-in">
+      <a class="marca" href="{% if user.is_authenticated %}{% url 'inicio' %}{% else %}{% url 'login' %}{% endif %}">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l11 4v8c0 7.5-4.8 13-11 16C9.8 27 5 21.5 5 14V6l11-4z" fill="#fff"/><path d="M16 9v7" stroke="#0B3D91" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="21" r="1.8" fill="#0B3D91"/></svg>
+        AlertAção
+      </a>
+      {% if user.is_authenticated %}
+      <nav class="nav-desk" aria-label="Principal">
+        <a href="{% url 'inicio' %}" class="{% if rota == 'inicio' or rota == 'alerta_detalhe' %}ativo{% endif %}">Início</a>
+        <a href="{% url 'mapa' %}" class="{% if rota == 'mapa' or rota == 'ponto_novo' %}ativo{% endif %}">Mapa</a>
+        <a href="{% url 'meus_chamados' %}" class="{% if rota == 'meus_chamados' %}ativo{% endif %}">Chamados</a>
+        <a href="{% url 'notificacoes' %}" class="{% if rota == 'notificacoes' %}ativo{% endif %}">Avisos</a>
+        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Administração</a>{% endif %}
+      </nav>
+      {% endif %}
+    </div>
+  </header>
+  <main{% block mainclass %}{% endblock %}>
+    {% if messages %}<ul class="mensagens" role="status">{% for m in messages %}<li class="{{ m.tags }}">{{ m }}</li>{% endfor %}</ul>{% endif %}
     {% block conteudo %}{% endblock %}
   </main>
+  {% if user.is_authenticated %}
+  <nav class="tabbar" aria-label="Principal">
+    <a href="{% url 'inicio' %}" class="{% if rota == 'inicio' or rota == 'alerta_detalhe' %}ativo{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Início</span></a>
+    <a href="{% url 'mapa' %}" class="{% if rota == 'mapa' or rota == 'ponto_novo' %}ativo{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Mapa</span></a>
+    <a href="{% url 'notificacoes' %}" class="{% if rota == 'notificacoes' %}ativo{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 004 0"/></svg><span>Avisos</span></a>
+    <a href="{% url 'meus_chamados' %}" class="{% if rota == 'meus_chamados' %}ativo{% endif %}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 01-11.5 7.2L4 21l1.8-5.3A8 8 0 1121 12z"/></svg><span>Chamados</span></a>
+  </nav>
+  {% endif %}
+  {% endwith %}
 </body>
 </html>

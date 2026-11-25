@@ -11,7 +11,7 @@
     <p>{{ tarefa.modelo.instrucao }}</p>
   </div>
   <p>Conte o que você não consegue resolver e marque o local no mapa. O pedido vai por e-mail ao órgão responsável.</p>
-  <form method="post" novalidate>
+  <form method="post" novalidate class="painel-form">
     {% csrf_token %}
     {{ form.non_field_errors }}
     {% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
@@ -42,7 +42,7 @@
     var regiao = JSON.parse(document.getElementById("regiao-data").textContent);
     var mapa = L.map("mapa");
     L.tileLayer("{{ tile_url|escapejs }}", {maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"}).addTo(mapa);
-    var contorno = L.geoJSON(regiao, {style: {color: "#1f4e9c", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
+    var contorno = L.geoJSON(regiao, {style: {color: "#1D5BD6", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
     mapa.fitBounds(contorno.getBounds());
     var marcador = null;
     function definirPonto(lat, lon, precisao) {

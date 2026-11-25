@@ -1,2 +1,0 @@
-# Cole no FIM de app/config/settings.py:
-INSTALLED_APPS += ["indicadores"]

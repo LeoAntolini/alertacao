@@ -42,3 +42,22 @@ Nunca coloque esses valores no repositório.
 Sem configuração, os e-mails de notificação vão para o log do serviço (backend de console), o que basta para a demonstração.
 Para e-mail real, defina EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend, EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
 EMAIL_HOST_PASSWORD e DEFAULT_FROM_EMAIL com os dados de um provedor SMTP.
+
+### Redesign visual do AlertAcao (somente templates; nenhuma view, model, rota ou teste alterado)
+
+1) Na raiz do repositorio:  git checkout -b feature/redesign-visual
+2) Extraia este zip na raiz (ele sobrescreve os 14 templates em app/*/templates/).
+3) Rode:  docker compose exec web python manage.py test
+   Esperado: mesma contagem de testes que antes, todos passando.
+4) Abra no navegador (celular e computador): login, cadastro, inicio, plano do alerta, mapa, relatar, chamados, avisos e painel.
+5) Se tudo certo:  git add -A && git commit -m "feat(ui): redesign visual completo (mobile-first, navegacao inferior, cards)"
+   Depois abra o PR para main e faca o merge.
+
+### Botao de Administracao + visual do Django admin
+
+1) Na branch feature/redesign-visual, extraia este zip na raiz (ele sobrescreve base.html e inicio.html
+   e cria app/templates/admin/base_site.html).
+2) Cole o conteudo de settings_adicionar_no_fim_admin_visual.txt no FIM de app/config/settings.py.
+3) docker compose exec web python manage.py test   (deve continuar tudo passando)
+4) Entre com um superusuario: aparece "Administracao do sistema" no inicio e "Administracao" no menu do computador.
+   Moradores comuns nao veem o botao (e /admin/ continua exigindo login de staff).

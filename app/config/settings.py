@@ -221,3 +221,5 @@ INSTALLED_APPS += ["pontos"]
 INSTALLED_APPS += ["chamados"]
 
 INSTALLED_APPS += ["indicadores"]
+
+TEMPLATES[0]["DIRS"] = list(TEMPLATES[0].get("DIRS", [])) + [BASE_DIR / "templates"]

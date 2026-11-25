@@ -6,7 +6,7 @@
 {% endblock %}
 {% block conteudo %}
   <h1>Relatar um risco em {{ regiao.nome }}</h1>
-  <form method="post" novalidate>
+  <form method="post" novalidate class="painel-form">
     {% csrf_token %}
     {{ form.non_field_errors }}
     {% for campo in form.hidden_fields %}{{ campo }}{{ campo.errors }}{% endfor %}
@@ -38,7 +38,7 @@
       maxZoom: 19,
       attribution: "&copy; OpenStreetMap contributors"
     }).addTo(mapa);
-    var contorno = L.geoJSON(regiao, {style: {color: "#1f4e9c", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
+    var contorno = L.geoJSON(regiao, {style: {color: "#1D5BD6", weight: 2, fillOpacity: 0.05}}).addTo(mapa);
     mapa.fitBounds(contorno.getBounds());
 
     var marcador = null;
