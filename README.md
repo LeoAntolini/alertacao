@@ -1,63 +1,102 @@
-# alertacao
+# AlertAção
 
-## Como rodar o projeto (ambiente local)
+Plataforma comunitária (PWA) de prevenção de desastres: transforma avisos de risco em um plano de prevenção por região, reúne pontos de risco em um mapa colaborativo e permite acionar o órgão responsável por e-mail com link seguro.
 
-Pré-requisitos: Git, Docker Desktop (aberto) e VS Code.
+Projeto da Avaliação 3 (A3) de Engenharia de Software. Linha: Computação Aplicada ao Meio Ambiente e Recursos Naturais. ODS 11 e 13.
 
-1. Clone o repositório e entre na pasta.
-2. Copie o arquivo de variáveis: `cp .env.example .env` (no Windows PowerShell: `copy .env.example .env`) e troque a senha e a chave.
-3. Suba o ambiente: `docker compose up --build`
-4. Em outro terminal, crie as tabelas: `docker compose exec web python manage.py migrate`
-5. Abra http://localhost:8000
+> Aviso preventivo comunitário: não substitui alertas oficiais da Defesa Civil. Em risco iminente, ligue 199 (Defesa Civil) ou 193 (Bombeiros). Para registro oficial, ligue 156 ou use o portal SP156.
 
-Parar: `Ctrl+C` no terminal do `docker compose up`. Apagar também o banco: `docker compose down -v`.
+## Integrantes
 
-O arquivo `.env` guarda segredos e **nunca** deve ser commitado.
+| Nome completo | RA | Papel principal |
+| --- | --- | --- |
+| Bryan Matos | 825134014 | Requisitos |
+| Leonardo Antolini de Oliveira | 824125434 | Gerenciamento, implementação e documentação |
+| Marcos Vinicius Silveira da Silva | 824123862 | Modelagem e arquitetura |
 
-## Implantação na nuvem
+Todos os integrantes acompanharam o desenvolvimento; os commits estão na conta de Leonardo, responsável pelo código.
 
-- Banco: Neon (PostgreSQL com PostGIS), plano gratuito.
-- Aplicação: Render (Web Service em Docker), plano gratuito. O serviço dorme após 15 minutos sem acesso e leva cerca de 1 minuto para acordar na primeira requisição.
-- A cada deploy o contêiner roda `python manage.py migrate` antes de subir o servidor.
-- Verificação de saúde: `GET /saude/` (não usa o banco).
+Repositório: https://github.com/LeoAntolini/alertacao (privado; o professor precisa ser adicionado como colaborador)
 
-### Comandos de manutenção no banco da nuvem
+## Demonstração
 
-Crie o arquivo `.env.neon` a partir de `.env.neon.example` e rode, na raiz do repositório:
+- Site: https://alertacao.onrender.com (o plano gratuito dorme após 15 minutos; a primeira requisição leva cerca de 1 minuto)
+- Vídeo: [link do vídeo]
 
-    docker compose run --rm web-neon python manage.py migrate
-    docker compose run --rm web-neon python manage.py carregar_regioes regioes/fixtures/regioes_piloto.geojson
-    docker compose run --rm web-neon python manage.py carregar_modelos_tarefa
-    docker compose run --rm web-neon python manage.py createsuperuser
+## Funcionalidades do MVP
 
-### Variáveis de ambiente do serviço (Render)
+- Alerta manual por região, com estágios: previsão (mais de 72 h), preparação (24 a 72 h) e iminente (menos de 24 h)
+- Plano de prevenção: tarefas que o morador conclui, dispensa ou pede ajuda
+- Mapa de pontos de risco dentro da região do morador
+- Chamado ao órgão responsável por e-mail, com link seguro e acompanhamento de status
+- Notificações na caixa de entrada e por e-mail
+- Painel de indicadores I1 a I8 para o responsável pelo sistema
 
-POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_SSLMODE=require,
-DJANGO_SECRET_KEY, DJANGO_DEBUG=0, DJANGO_ALLOWED_HOSTS=.onrender.com,
-DJANGO_CSRF_TRUSTED_ORIGINS=https://*.onrender.com, DEMO_MODE=1, SITE_URL=https://NOME-DO-SERVICO.onrender.com.
-Nunca coloque esses valores no repositório.
+Fica para a Fase 2: foto no relato, confirmação de pontos por outros moradores, exclusão de conta, sugestão automática de alerta (Open-Meteo), reforço por estágio, SMS e Cell Broadcast, painel para órgãos, ONGs.
+
+## Tecnologias
+
+Python e Django 5.2 (GeoDjango), PostgreSQL com PostGIS, Leaflet 1.9.4 com tiles OpenStreetMap, Docker e docker compose, Gunicorn e WhiteNoise, Argon2. Implantação: Neon (banco) e Render (aplicação).
+
+## Como rodar localmente
+
+Pré-requisitos: Docker e docker compose.
+
+1. Copie `.env.example` para `.env` e ajuste os valores.
+2. Suba o ambiente:
+
+       docker compose up --build
+
+3. Em outro terminal, prepare os dados:
+
+       docker compose exec web python manage.py migrate
+       docker compose exec web python manage.py carregar_regioes regioes/fixtures/regioes_piloto.geojson
+       docker compose exec web python manage.py carregar_modelos_tarefa
+       docker compose exec web python manage.py carregar_destinatarios
+       docker compose exec web python manage.py createsuperuser
+
+4. Abra http://localhost:8000. O administrador fica em `/admin/`.
+
+### Testes
+
+    docker compose exec web python manage.py test
+
+### Comandos de manutenção
+
+| Comando | O que faz |
+| --- | --- |
+| `enviar_notificacoes` | Envia as notificações pendentes por e-mail |
+| `verificar_chamados` | Marca chamados sem retorno após 72 h e reenvia e-mails em aberto |
+| `encerrar_alertas` | Encerra alertas vencidos e expira tarefas |
 
 ### E-mail
 
-Sem configuração, os e-mails de notificação vão para o log do serviço (backend de console), o que basta para a demonstração.
-Para e-mail real, defina EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend, EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-EMAIL_HOST_PASSWORD e DEFAULT_FROM_EMAIL com os dados de um provedor SMTP.
+Sem configuração, os e-mails vão para o log (backend de console), o que basta para a demonstração. Para e-mail real, defina `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` e `DEFAULT_FROM_EMAIL`.
 
-### Redesign visual do AlertAcao (somente templates; nenhuma view, model, rota ou teste alterado)
+## Implantação na nuvem
 
-1) Na raiz do repositorio:  git checkout -b feature/redesign-visual
-2) Extraia este zip na raiz (ele sobrescreve os 14 templates em app/*/templates/).
-3) Rode:  docker compose exec web python manage.py test
-   Esperado: mesma contagem de testes que antes, todos passando.
-4) Abra no navegador (celular e computador): login, cadastro, inicio, plano do alerta, mapa, relatar, chamados, avisos e painel.
-5) Se tudo certo:  git add -A && git commit -m "feat(ui): redesign visual completo (mobile-first, navegacao inferior, cards)"
-   Depois abra o PR para main e faca o merge.
+Veja `README_implantacao.md`. Nunca coloque segredos no repositório. Verificação de saúde: `GET /saude/`.
 
-### Botao de Administracao + visual do Django admin
+## Estrutura
 
-1) Na branch feature/redesign-visual, extraia este zip na raiz (ele sobrescreve base.html e inicio.html
-   e cria app/templates/admin/base_site.html).
-2) Cole o conteudo de settings_adicionar_no_fim_admin_visual.txt no FIM de app/config/settings.py.
-3) docker compose exec web python manage.py test   (deve continuar tudo passando)
-4) Entre com um superusuario: aparece "Administracao do sistema" no inicio e "Administracao" no menu do computador.
-   Moradores comuns nao veem o botao (e /admin/ continua exigindo login de staff).
+    app/
+      config/        configurações e rotas
+      usuarios/      cadastro, login, papéis e interface base
+      regioes/       regiões com geometria
+      alertas/       alertas, modelos de tarefa e plano de prevenção
+      notificacoes/  notificações
+      pontos/        mapa e pontos de risco
+      chamados/      chamados e link seguro do destinatário
+      indicadores/   painel I1 a I8
+    docs/            documentação técnica, diagramas e roteiro da demonstração
+
+## Documentação
+
+- Documentação técnica (estrutura da A3)
+- Documento-Base v2.2 e planilha da Etapa 3 (requisitos e rastreabilidade)
+- Diagramas de casos de uso, classes e sequência
+- Roteiro da demonstração
+
+## Fluxo de trabalho
+
+Branches por funcionalidade, integração por pull request na `main` e quadro Kanban no GitHub Projects.
